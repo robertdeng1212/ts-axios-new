@@ -4,7 +4,7 @@
  * @Author: dengweiyi
  * @Date: 2020-12-08 22:26:05
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-10 23:59:37
+ * @LastEditTime: 2020-12-11 01:55:21
  */
 
 // 字符串字面量类型，为了让 method 只能传入合法的字符串
@@ -26,6 +26,7 @@ export interface AxiosRequestConfig {
   timeout?: number // 超时，单位毫秒
   transformRequest?: AxiosTransformer | AxiosTransformer[]
   transformResponse?: AxiosTransformer | AxiosTransformer[]
+  cancelToken?: CancelToken
 
   // 字符串索引签名
   [propName: string]: any
@@ -86,9 +87,15 @@ export interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
-// 扩展 Axios.create 静态接口
+// 扩展 Axios 静态接口
 export interface AxiosStatic extends AxiosInstance {
   create(config?: AxiosRequestConfig): AxiosInstance
+
+  CancelToken: CancelTokenStatic
+
+  Cancel: CancelStactic
+
+  isCancel: (value: any) => boolean
 }
 
 export interface AxiosInterceptorManager<T> {
@@ -108,4 +115,45 @@ export interface RejectedFn {
 
 export interface AxiosTransformer {
   (data: any, headers?: any): any
+}
+
+// 取消实例类型的接口定义
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel
+
+  throwIfRequested(): void
+}
+
+// 取消方法的接口定义
+export interface Canceler {
+  (message?: string): void
+}
+
+// CanceToken 类构造函数参数的接口定义
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+// 扩展 CancelToken 取消请求静态接口
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+
+// CancelToken 类类型
+export interface CancelTokenStatic {
+  new(executor: CancelExecutor): CancelToken
+
+  source(): CancelTokenSource
+}
+
+// 实例类型
+export interface Cancel {
+  message?: string
+}
+
+// 类类型
+export interface CancelStactic {
+  new(message?: string): Cancel
 }

@@ -4,7 +4,7 @@
  * @Author: dengweiyi
  * @Date: 2020-12-09 16:48:45
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-10 23:48:43
+ * @LastEditTime: 2020-12-11 01:36:43
  */
 
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
@@ -16,6 +16,7 @@ import { flattenHeaders } from '../helpers/headers'
 import transform from './transform'
 
 export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+  throwIfCancellationRequested(config)
   processConfig(config)
   return xhr(config).then((res) => {
     return tranformResponseData(res)
@@ -55,4 +56,11 @@ function tranformResponseData(res: AxiosResponse): AxiosResponse {
   // res.data = transformResonse(res.data)
   res.data = transform(res.data, res.headers, res.config.transformResponse)
   return res
+}
+
+// 检测是否有调用过取消请求
+function throwIfCancellationRequested(config: AxiosRequestConfig): void {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested()
+  }
 }
