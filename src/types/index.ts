@@ -4,7 +4,7 @@
  * @Author: dengweiyi
  * @Date: 2020-12-08 22:26:05
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-10 12:00:39
+ * @LastEditTime: 2020-12-10 16:56:58
  */
 
 // 字符串字面量类型，为了让 method 只能传入合法的字符串
@@ -50,6 +50,11 @@ export interface AxiosError extends Error {
 
 // 扩展接口 - 接口类型定义，描述 axios 类中的公共方法
 export interface Axios {
+  interceptors: {
+    request: AxiosInterceptorManager<AxiosRequestConfig>
+    response: AxiosInterceptorManager<AxiosResponse>
+  }
+  
   request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
   get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
@@ -73,4 +78,19 @@ export interface AxiosInstance extends Axios {
 
   // 添加函数类型定义，实现函数重载
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+}
+
+export interface AxiosInterceptorManager<T> {
+  // 该函数定义返回的 number 给 eject 取消拦截使用
+  use(resolved: ResolvedFn<T>, rejected?: RejectedFn): number
+
+  eject(id: number): void
+}
+
+export interface ResolvedFn<T> {
+  (val: T): T | Promise<T>
+}
+
+export interface RejectedFn {
+  (error: any): any
 }
