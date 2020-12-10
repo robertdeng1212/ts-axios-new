@@ -4,7 +4,7 @@
  * @Author: dengweiyi
  * @Date: 2020-12-08 22:26:05
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-09 18:19:53
+ * @LastEditTime: 2020-12-10 12:00:39
  */
 
 // 字符串字面量类型，为了让 method 只能传入合法的字符串
@@ -26,8 +26,8 @@ export interface AxiosRequestConfig {
   timeout?: number // 超时，单位毫秒
 }
 
-export interface AxiosResponse {
-  data: any
+export interface AxiosResponse<T = any> {
+  data: T
   status: number
   statusText: string
   headers: any
@@ -35,7 +35,8 @@ export interface AxiosResponse {
   request: any
 }
 
-export interface AxiosPromise extends Promise<AxiosResponse> {
+// AxiosPromise<T = any> T 在 examples/extend/app.ts getUser 中 对应 res.data，  AxiosResponse<T> 对应 AxiosResponse 中的 data: T
+export interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {
 
 }
 
@@ -49,26 +50,27 @@ export interface AxiosError extends Error {
 
 // 扩展接口 - 接口类型定义，描述 axios 类中的公共方法
 export interface Axios {
-  request(config: AxiosRequestConfig): AxiosPromise
+  request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
-  get(url: string, config?: AxiosRequestConfig): AxiosPromise
+  get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 
-  delete(url: string, config?: AxiosRequestConfig): AxiosPromise
+  delete<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 
-  head(url: string, config?: AxiosRequestConfig): AxiosPromise
+  head<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 
-  options(url: string, config?: AxiosRequestConfig): AxiosPromise
+  options<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 
-  post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   
-  put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   
-  patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
 export interface AxiosInstance extends Axios {
-  (config: AxiosRequestConfig): AxiosPromise
+  // 在 examples/extend/app.ts getUser 中，<T = any> AxiosPromise<T> 对应 ResponseData<User>
+  <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
   // 添加函数类型定义，实现函数重载
-  (url: string, config?: AxiosRequestConfig): AxiosPromise
+  <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
