@@ -4,11 +4,12 @@
  * @Author: dengweiyi
  * @Date: 2020-12-09 17:09:13
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-10 16:47:53
+ * @LastEditTime: 2020-12-10 18:45:27
  */
 import { AxiosPromise, AxiosRequestConfig, AxiosResponse, Method, ResolvedFn,  RejectedFn } from '../types'
 import dispatchRequest  from './dispatchRequest'
 import InterceptorManager from './InterceptorManager'
+import mergeConfig from './mergeConfig'
 
 interface Interceptors {
   request: InterceptorManager<AxiosRequestConfig>
@@ -21,10 +22,12 @@ interface PromiseChain<T> {
 }
 
 export default class Axios {
+  defaults: AxiosRequestConfig
   // 拦截器链式调用实现
   interceptors: Interceptors
 
-  constructor() {
+  constructor(initConfig: AxiosRequestConfig) {
+    this.defaults = initConfig
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
       response: new InterceptorManager<AxiosResponse>()
@@ -46,6 +49,8 @@ export default class Axios {
       config = url
     }
 
+    config = mergeConfig(this.defaults, config)
+    
     // 拦截器链式调用实现
     const chain: PromiseChain<any>[] = [{
       resolved: dispatchRequest,

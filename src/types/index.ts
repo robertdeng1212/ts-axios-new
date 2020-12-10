@@ -4,7 +4,7 @@
  * @Author: dengweiyi
  * @Date: 2020-12-08 22:26:05
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-10 16:56:58
+ * @LastEditTime: 2020-12-10 23:59:37
  */
 
 // 字符串字面量类型，为了让 method 只能传入合法的字符串
@@ -24,6 +24,11 @@ export interface AxiosRequestConfig {
   headers?: any
   responseType?: XMLHttpRequestResponseType
   timeout?: number // 超时，单位毫秒
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+
+  // 字符串索引签名
+  [propName: string]: any
 }
 
 export interface AxiosResponse<T = any> {
@@ -50,6 +55,7 @@ export interface AxiosError extends Error {
 
 // 扩展接口 - 接口类型定义，描述 axios 类中的公共方法
 export interface Axios {
+  defaults: AxiosRequestConfig
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>
@@ -80,6 +86,11 @@ export interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+// 扩展 Axios.create 静态接口
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
+}
+
 export interface AxiosInterceptorManager<T> {
   // 该函数定义返回的 number 给 eject 取消拦截使用
   use(resolved: ResolvedFn<T>, rejected?: RejectedFn): number
@@ -93,4 +104,8 @@ export interface ResolvedFn<T> {
 
 export interface RejectedFn {
   (error: any): any
+}
+
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
 }

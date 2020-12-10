@@ -4,9 +4,10 @@
  * @Author: dengweiyi
  * @Date: 2020-12-09 10:09:42
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-09 14:51:01
+ * @LastEditTime: 2020-12-10 23:12:22
  */
-import { isPlainObject } from './util'
+import { isPlainObject, deepMerge } from './util'
+import { Method } from '../types'
 
 function normalizeHeaderName(headers: any, normalizedName: string): void {
   if (!headers) {
@@ -55,4 +56,22 @@ export function parseHeaders(headers: string): any {
   })
 
   return parsed
+}
+
+// 扁平化 headaers
+export function flattenHeaders(headers: any, method: Method): any {
+  if (!headers) {
+    return headers
+  }
+
+  headers = deepMerge(headers.common, headers[method], headers)
+
+  const methodsToDelete = ['delete', 'get', 'head', 'options', 'post', 'put', 'patch', 'common']
+
+  // 删除不需要用到的字段
+  methodsToDelete.forEach(method => {
+    delete headers[method]
+  })
+
+  return headers
 }
