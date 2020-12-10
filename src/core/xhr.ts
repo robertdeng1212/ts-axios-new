@@ -4,12 +4,12 @@
  * @Author: dengweiyi
  * @Date: 2020-12-08 22:31:01
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-09 16:45:37
+ * @LastEditTime: 2020-12-09 17:29:21
  */
 
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
-import { parseHeaders } from './helpers/headers'
-import { createError } from './helpers/error'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
+import { parseHeaders } from '../helpers/headers'
+import { createError } from '../helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
@@ -26,7 +26,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       request.timeout = timeout
     }
 
-    request.open(method.toUpperCase(), url, true)
+    // url!：表示类型断言 url 不为空
+    request.open(method.toUpperCase(), url!, true)
 
     // 监听 readystatechange 事件，获取响应数据
     request.onreadystatechange = function handleLoad() {

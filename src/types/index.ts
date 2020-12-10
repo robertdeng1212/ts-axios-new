@@ -4,7 +4,7 @@
  * @Author: dengweiyi
  * @Date: 2020-12-08 22:26:05
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-09 17:07:06
+ * @LastEditTime: 2020-12-09 18:19:53
  */
 
 // 字符串字面量类型，为了让 method 只能传入合法的字符串
@@ -68,4 +68,7 @@ export interface Axios {
 
 export interface AxiosInstance extends Axios {
   (config: AxiosRequestConfig): AxiosPromise
+
+  // 添加函数类型定义，实现函数重载
+  (url: string, config?: AxiosRequestConfig): AxiosPromise
 }

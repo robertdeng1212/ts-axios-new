@@ -4,51 +4,24 @@
  * @Author: dengweiyi
  * @Date: 2020-12-09 16:48:45
  * @LastEditors: dengweiyi
- * @LastEditTime: 2020-12-09 17:07:56
+ * @LastEditTime: 2020-12-09 18:10:12
  */
 
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
-import xhr from './xhr'
-import { buildURL } from './helpers/url'
-import { transformRequest, transformResonse } from './helpers/data'
-import { processHeaders } from './helpers/headers'
+import { AxiosInstance } from './types'
+import Axios from './core/Axios'
+import { extend } from './helpers/util'
 
-function axios(config: AxiosRequestConfig): AxiosPromise {
-  processConfig(config)
-  return xhr(config).then((res) => {
-    return tranformResponseData(res)
-  })
+// 使用工厂函数创建 axios 实例
+function createInstance(): AxiosInstance {
+  const content = new Axios()
+  // 继承 axios 原型上的方法和属性
+  const instance = Axios.prototype.request.bind(content)
+
+  extend(instance, content)
+
+  return instance as AxiosInstance
 }
 
-// 处理配置
-function processConfig(config: AxiosRequestConfig): void {
-  // 注意处理调用处理函数的顺序
-  config.url = transformURL(config)
-  config.headers = transformHeaders(config)
-  config.data = tranformRequestData(config)
-}
-
-// 转换 url
-function transformURL(config: AxiosRequestConfig): string {
-  const {url, params} = config
-  return buildURL(url!, params)
-}
-
-// 处理请求数据
-function tranformRequestData(config: AxiosRequestConfig) {
-  return transformRequest(config.data)
-}
-
-// 处理请求 header
-function transformHeaders(config: AxiosRequestConfig): any {
-  // 解构赋值，如果 headers 没传，则赋值 {}
-  const { headers = {}, data } = config
-  return processHeaders(headers, data)
-}
-
-function tranformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transformResonse(res.data)
-  return res
-}
+const axios = createInstance()
 
 export default axios
